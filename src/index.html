@@ -1,33 +1,34 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-<meta charset="utf-8" />
-<title>test JOIN</title>
-<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
-<script src="https://code.jquery.com/jquery-3.5.0.min.js"></script>
-<script src="https://api.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.js"></script>
-<link href="https://api.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.css" rel="stylesheet" />
-<link rel="stylesheet" href="style.css">
+	<meta charset="utf-8" />
+	<title>test JOIN</title>
+	<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+	<script src="https://momentjs.com/downloads/moment.min.js"></script>
+	<script src="https://code.jquery.com/jquery-3.5.0.min.js"></script>
+	<script src="https://api.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.js"></script>
+	<link href="https://api.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.css" rel="stylesheet" />
+	<link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-<div id="map"></div>
-<div id="county-legend" class="legend" style="display: block;">
-    <h4>Cases/100,000 People</h4>
-    <div><span style="background-color: #ffffff"></span>0</div>
-    <div><span style="background-color: #fde6e6"></span>1</div>
-    <div><span style="background-color: #fdc4c4"></span>10</div>
-    <div><span style="background-color: #fc8b8b"></span>100</div>
-    <div><span style="background-color: #d18080"></span>500</div>
-    <div><span style="background-color: #ae8080"></span>1000</div>
-		</div>
-		<div id="date" class="date-box" style="display: block;">
-			<input type="date" id="mapdate" name="trip-start"
-       value="2020-04-28"
-			 min="2020-03-22" max="2020-04-28">
-			<input type="button" value="Reload Map">
-		</div>
-		<script src="scripts.js"></script>
-
-
+	<div id="map"></div>
+	<div id="county-legend" class="legend" style="display: block;">
+		<h4>Cases/100,000 People</h4>
+		<div><span style="background-color: #ffffff"></span>0</div>
+		<div><span style="background-color: #fde6e6"></span>1</div>
+		<div><span style="background-color: #fdc4c4"></span>10</div>
+		<div><span style="background-color: #fc8b8b"></span>100</div>
+		<div><span style="background-color: #d18080"></span>500</div>
+		<div><span style="background-color: #ae8080"></span>1000</div>
+	</div>
+	<div id="cases-date" class="date-box" style="display: block;">
+		<input type="date" id="mapdate" name="trip-start" placeholder="" value="2020-04-28" min="2020-03-22"
+			max="2020-04-28">
+		<input type="button" value="Reload Map" onclick="validateDate()">
+	</div>
+	<script src="scripts.js"></script>
 </body>
+
 </html>
