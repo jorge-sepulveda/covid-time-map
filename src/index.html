@@ -8,10 +8,6 @@
 <script src="https://api.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.js"></script>
 <link href="https://api.mapbox.com/mapbox-gl-js/v1.10.0/mapbox-gl.css" rel="stylesheet" />
 <link rel="stylesheet" href="style.css">
-<style>
-	body { margin: 0; padding: 0; }
-	#map { position: absolute; top: 0; bottom: 0; width: 100%; }
-</style>
 </head>
 <body>
 <div id="map"></div>
@@ -23,8 +19,15 @@
     <div><span style="background-color: #fc8b8b"></span>100</div>
     <div><span style="background-color: #d18080"></span>500</div>
     <div><span style="background-color: #ae8080"></span>1000</div>
-    </div>
-    <script src="scripts.js"></script>
+		</div>
+		<div id="date" class="date-box" style="display: block;">
+			<input type="date" id="mapdate" name="trip-start"
+       value="2020-04-28"
+			 min="2020-03-22" max="2020-04-28">
+			<input type="button" value="Reload Map">
+		</div>
+		<script src="scripts.js"></script>
+
 
 </body>
 </html>

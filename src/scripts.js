@@ -71,7 +71,7 @@ map.on('load', function () {
 
     map.on('mousemove', 'states-join', function(e) {
 
-        if (e.features.length > 0) {
+        /*if (e.features.length > 0) {
             if (hoveredStateId) {
             map.setFeatureState(
             { source: 'counties-with-pops-f-8nbien', sourceLayer: 'counties-with-pops-f-8nbien', id: hoveredStateId },
@@ -83,7 +83,7 @@ map.on('load', function () {
             { source: 'counties-with-pops-f-8nbien', sourceLayer: 'counties-with-pops-f-8nbien', id: hoveredStateId },
             { hover: true }
             );
-            }
+            }*/
         // Change the cursor style as a UI indicator.
 
         // Single out the first found feature.
