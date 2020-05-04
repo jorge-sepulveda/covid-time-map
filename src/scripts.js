@@ -32,15 +32,11 @@ function validateDate() {
 function reloadMap() {
 	dateValue = moment($("#mapdate").val());
 	dateToLoad = dateValue.format("MM-DD-YYYY").toString()
-	console.log(dateToLoad)
 	currentDateSelected = dateToLoad
 	map.removeLayer('states-join')
 
-	currentSource = map.getSource('counties-with-pops-f-8nbien')
-	console.log(currentSource)
-
-	var newExpression = ['match', ['get', 'fips']];
-	console.log(newExpression.length)
+	var rExpression = ['match', ['get', 'fips']];
+	//console.log(rExpression.length)
 
 	data[currentDateSelected].forEach(function (row) {
 		number = (row['infection_rate'])
@@ -50,10 +46,10 @@ function reloadMap() {
 			(number > 10) ? "#FDC4C4" :
 			(number > 1) ? "#FDE6E6" :
 			"#FFFFFF";
-		newExpression.push(row['fips'], color);
+		rExpression.push(row['fips'], color);
 	});
 
-	newExpression.push('rgba(255,255,255,1)');
+	rExpression.push('rgba(255,255,255,1)');
 
 	map.addLayer({
 		'id': 'states-join',
@@ -61,17 +57,24 @@ function reloadMap() {
 		'source': 'counties-with-pops-f-8nbien',
 		'source-layer': 'counties-with-pops-f-8nbien',
 		'paint': {
-			'fill-color': newExpression,
+			'fill-color': rExpression,
 			'fill-outline-color': '#000000',
 			'fill-opacity': 0.75,
 		}
 	});
+
+	map.moveLayer('states-join', 'statelines')
 }
 
 map.on('load', function () {
 	map.addSource('counties-with-pops-f-8nbien', {
 		type: 'vector',
 		url: 'mapbox://gsepulveda96.aj2hpi11'
+	});
+
+	map.addSource('state-lines', {
+		type: 'vector',
+		url: 'mapbox://gsepulveda96.statelines'
 	});
 
 	var expression = ['match', ['get', 'fips']];
@@ -106,6 +109,13 @@ map.on('load', function () {
 		}
 	});
 
+	map.addLayer({
+		'id': 'statelines',
+		'type': 'line',
+		'source': 'state-lines',
+		'source-layer': 'state-lines'
+	});
+
 	map.on('mousemove', 'states-join', function (e) {
 		map.getCanvas().style.cursor = 'pointer';
 		var coordinates = e.features[0].geometry.coordinates.slice();
@@ -119,7 +129,7 @@ map.on('load', function () {
 
 		// Display a popup with the name of the county and info
 		popup.setLngLat(e.lngLat)
-			.setHTML('County: ' + feature.properties.NAME + '</br>' 
+			.setHTML(feature.properties.NAME + ' County' + '</br>' 
 					+'Population: ' + feature.properties.POPESTIMATE2019 + '</br>'
 					+'Cases: ' + selectedCounty[0]['confirmed'] + '</br>'
 					+'Infection Rate: ' + selectedCounty[0]['infection_rate'].toFixed(2) + '/100,000 People</br>'
@@ -132,4 +142,10 @@ map.on('load', function () {
 		map.getCanvas().style.cursor = '';
 		popup.remove();
 	});
+
+	map.on('zoom', function() {
+		popup.remove();
+	});
+
+	map.addControl(new mapboxgl.NavigationControl());
 });
