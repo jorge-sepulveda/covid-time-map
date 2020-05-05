@@ -1,2 +1,3 @@
-src/pyscraper
+src/pyscraper/outputFiles/*.json
+src/pyscraper/popFiles/*.json
 src/statemap
