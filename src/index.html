@@ -13,6 +13,7 @@
 </head>
 
 <body>
+	
 	<div id="map">
 		<div id="county-legend" class="legend" style="display: block;">
 			<h4>Cases/100,000 People</h4>
@@ -24,11 +25,15 @@
 			<div><span style="background-color: #ae8080"></span>1000</div>
 		</div>
 		<div id="cases-date" class="date-box" style="display: block;">
-			<input type="date" id="mapdate" name="trip-start" placeholder="" value="2020-04-30" min="2020-03-22"
-				max="2020-04-30">
-			<input type="button" value="Reload Map" onclick="validateDate()">
+			<input type="date" id="mapdate" name="trip-start" placeholder="" value="2020-05-03" min="2020-03-22"
+				max="2020-05-03">
+			<button onclick="validateDate()">Reload Map</button>
 		</div>
+		<div id="info-box" class="info" style="display: block;">Hover over a county for info</div>
+		<nav id="menu"></nav>
 	</div>
+
+	
 
 	<script src="scripts.js"></script>
 </body>
