@@ -4,10 +4,11 @@ var currentDateSelected;
 $(document).ready(function () {
 	$.getJSON("https://raw.githubusercontent.com/jorge-sepulveda/covid-time-map/master/src/time-series-counties.json", function (json) {
 		countyData = json;
-	}).done(function() {
+	}).done(function () {
 		console.log('counties downloaded')
 		countyKeys = (Object.keys(countyData))
-		currentDateSelected = countyKeys[countyKeys.length-1]
+		currentDateSelected = countyKeys[countyKeys.length - 1]
+		console.log(currentDateSelected)
 	});
 
 	$.getJSON("https://raw.githubusercontent.com/jorge-sepulveda/covid-time-map/master/src/time-series-states.json", function (json) {
@@ -26,7 +27,7 @@ var map = new mapboxgl.Map({
 
 function validateDate() {
 	var minDate = new Date('01/21/2020');
-	var maxDate = new Date('05/03/2020');
+	var maxDate = new Date('05/04/2020');
 	var dateToCheck = new Date($("#mapdate").val())
 
 	if (dateToCheck > minDate && dateToCheck <= maxDate) {
@@ -52,7 +53,7 @@ function reloadMap() {
 			(number > 10) ? "#FDC4C4" :
 			(number > 1) ? "#FDE6E6" :
 			"#FFFFFF";
-			newStateExpression.push(row['STATE'], color);
+		newStateExpression.push(row['STATE'], color);
 	});
 	countyData[currentDateSelected].forEach(function (row) {
 		number = (row['infection_rate'])
@@ -62,7 +63,7 @@ function reloadMap() {
 			(number > 10) ? "#FDC4C4" :
 			(number > 1) ? "#FDE6E6" :
 			"#FFFFFF";
-			newCountyExpression.push(row['fips'], color);
+		newCountyExpression.push(row['fips'], color);
 	});
 
 	newStateExpression.push('rgba(255,255,255,1)');
@@ -123,7 +124,7 @@ map.on('load', function () {
 		'paint': {
 			'fill-color': countyExpression,
 			'fill-outline-color': '#000000',
-			'fill-opacity': 0.75,
+			'fill-opacity': 0.5
 		}
 	});
 
@@ -167,7 +168,7 @@ map.on('load', function () {
 	});
 	map.on('mouseleave', 'covid-county', function () {
 		map.getCanvas().style.cursor = '';
-		document.getElementById("info-box").innerHTML = "Hover over the map for more info"
+		document.getElementById("info-box").innerHTML = "Hover over the map to see info"
 	});
 
 	map.on('mousemove', 'covid-state', function (e) {
@@ -181,7 +182,7 @@ map.on('load', function () {
 		var feature = e.features[0];
 		selectedState = stateData[currentDateSelected].filter(state => state.STATE === feature.properties.STATE);
 
-		document.getElementById("info-box").innerHTML = (feature.properties.NAME+ '</br>' +
+		document.getElementById("info-box").innerHTML = (feature.properties.NAME + '</br>' +
 			'Population: ' + feature.properties.POPESTIMATE2019 + '</br>' +
 			'Cases: ' + selectedState[0]['confirmed'] + '</br>' +
 			'Infection Rate: ' + selectedState[0]['infection_rate'].toFixed(2) + '/100,000 People</br>' +
@@ -189,45 +190,29 @@ map.on('load', function () {
 	});
 	map.on('mouseleave', 'covid-county', function () {
 		map.getCanvas().style.cursor = '';
-		document.getElementById("info-box").innerHTML = "Hover over the map for more info"
+		document.getElementById("info-box").innerHTML = "Hover over the map to see info"
 	});
 
-	map.on('zoom', function () {
-		//popup.remove();
-	});
+	var link = document.createElement('a');
+	link.href = '#';
+	link.className = ''
+	link.textContent = 'Toggle Counties'
 
-	var toggleableLayerIds = ['covid-state', 'covid-county'];
+	link.onclick = function (e) {
+		e.preventDefault();
+		e.stopPropagation();
 
-	// set up the corresponding toggle button for each layer
-	for (var i = 0; i < toggleableLayerIds.length; i++) {
-		var id = toggleableLayerIds[i];
-
-		var link = document.createElement('a');
-		link.href = '#';
-		link.className = 'active';
-		link.textContent = id;
-
-		link.onclick = function (e) {
-			var clickedLayer = this.textContent;
-			e.preventDefault();
-			e.stopPropagation();
-
-			var visibility = map.getLayoutProperty(clickedLayer, 'visibility');
-
-			// toggle layer visibility by changing the layout object's visibility property
-			if (visibility === 'visible') {
-				map.setLayoutProperty(clickedLayer, 'visibility', 'none');
-				this.className = '';
-			} else {
-				this.className = 'active';
-				map.setLayoutProperty(clickedLayer, 'visibility', 'visible');
-			}
-		};
-
-		var layers = document.getElementById('menu');
-		layers.appendChild(link);
+		if (this.className === 'active') {
+			map.setLayoutProperty('covid-state', 'visibility', 'visible');
+			this.className = '';
+		} else {
+			map.setLayoutProperty('covid-state', 'visibility', 'none');
+			this.className = 'active'
+		}
 	}
 
+	var layers = document.getElementById('menu');
+	layers.appendChild(link);
 
 	//map.addControl(new mapboxgl.NavigationControl());
 });

@@ -5,9 +5,6 @@ import csv
 from datetime import date, timedelta
 import sys
 
-
-
-
 def getAllCasesByDate(date, data):
     filteredstuff = [row for row in data if row[0]==date]
     casesJ = {}
