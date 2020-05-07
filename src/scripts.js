@@ -18,8 +18,8 @@ $(document).ready(function () {
 mapboxgl.accessToken = 'pk.eyJ1IjoiZ3NlcHVsdmVkYTk2IiwiYSI6ImNrNzlmaGFvNDBzcHozZG9kOXQxNjF0bW8ifQ.P4nx2cJHuZTio2JivJyBDA';
 var map = new mapboxgl.Map({
 	container: 'map',
-	style: 'mapbox://styles/mapbox/light-v10',
-	center: [-99.9, 41.5],
+	style: 'mapbox://styles/gsepulveda96/ck9x8kqvf16h71ip8tuuvk97i',
+	center: [-94.64, 37.68],
 	zoom: 4,
 	minZoom: 3,
 	maxZoom:10
@@ -126,7 +126,7 @@ map.on('load', function () {
 		'paint': {
 			'fill-color': stateExpression
 		}
-	},'road-label')
+	},'road-minor-low')
 
 	map.addLayer({
 		'id': 'covid-county',
@@ -187,7 +187,8 @@ map.on('load', function () {
 			'Population: ' + feature.properties.POPESTIMATE2019 + '</br>' +
 			'Cases: ' + selectedState[0]['confirmed'] + '</br>' +
 			'Infection Rate: ' + selectedState[0]['infection_rate'].toFixed(2) + '/100,000 People</br>' +
-			'Deaths: ' + selectedState[0]['confirmed'] + '</br>')
+			'Deaths: ' + selectedState[0]['confirmed'] + '</br>' +
+			'Death Rate: '+ selectedState[0]['death_rate'].toFixed(2))
 	});
 	map.on('mouseleave', 'covid-county', function () {
 		map.getCanvas().style.cursor = '';
@@ -212,8 +213,14 @@ map.on('load', function () {
 		}
 	}
 
+	var mortalButton = document.createElement('a')
+	mortalButton.href = '#'
+	mortalButton.className = ''
+	mortalButton.textContent = 'Mortality Rate'
+
 	var layers = document.getElementById('menu');
 	layers.appendChild(link);
+	layers.appendChild(mortalButton)
 
 	//map.addControl(new mapboxgl.NavigationControl());
 });
