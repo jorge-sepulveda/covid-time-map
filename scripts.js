@@ -195,13 +195,14 @@ map.on('load', function () {
 			'Population: ' + feature.properties.POPESTIMATE2019 + '</br>' +
 			'Cases: ' + selectedCounty[0]['confirmed'] + '</br>' +
 			'Infection Rate: ' + selectedCounty[0]['infection_rate'].toFixed(2) + '/100,000 People</br>' +
-			'Deaths: ' + selectedCounty[0]['confirmed'] + '</br>')
+			'Deaths: ' + selectedCounty[0]['confirmed'] + '</br>'+
+			'Death Rate: '+ selectedCounty[0]['death_rate'].toFixed(2))
 	});
 	map.on('mouseleave', 'covid-county', function () {
 		map.getCanvas().style.cursor = '';
 		document.getElementById("info-box").innerHTML = "Hover over the map to see info"
 	});
-	/*
+	
 	map.on('mousemove', 'covid-state', function (e) {
 		map.getCanvas().style.cursor = 'pointer';
 		var coordinates = e.features[0].geometry.coordinates.slice();
@@ -220,7 +221,7 @@ map.on('load', function () {
 			'Deaths: ' + selectedState[0]['confirmed'] + '</br>' +
 			'Death Rate: '+ selectedState[0]['death_rate'].toFixed(2))
 	});
-	*/
+	
 	map.on('mouseleave', 'covid-county', function () {
 		map.getCanvas().style.cursor = '';
 		document.getElementById("info-box").innerHTML = "Hover over the map to see info"
