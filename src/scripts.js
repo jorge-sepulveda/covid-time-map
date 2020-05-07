@@ -10,11 +10,9 @@ $(document).ready(function () {
 		currentDateSelected = countyKeys[countyKeys.length - 1]
 		console.log(currentDateSelected)
 	});
-
 	$.getJSON("https://raw.githubusercontent.com/jorge-sepulveda/covid-time-map/master/src/time-series-states.json", function (json) {
 		stateData = json;
 	});
-
 });
 
 mapboxgl.accessToken = 'pk.eyJ1IjoiZ3NlcHVsdmVkYTk2IiwiYSI6ImNrNzlmaGFvNDBzcHozZG9kOXQxNjF0bW8ifQ.P4nx2cJHuZTio2JivJyBDA';
@@ -22,14 +20,15 @@ var map = new mapboxgl.Map({
 	container: 'map',
 	style: 'mapbox://styles/mapbox/light-v10',
 	center: [-99.9, 41.5],
-	zoom: 4
+	zoom: 4,
+	minZoom: 3,
+	maxZoom:6
 });
 
 function validateDate() {
 	var minDate = new Date('01/21/2020');
 	var maxDate = new Date('05/04/2020');
 	var dateToCheck = new Date($("#mapdate").val())
-
 	if (dateToCheck > minDate && dateToCheck <= maxDate) {
 		reloadMap()
 	} else {
@@ -84,6 +83,8 @@ map.on('load', function () {
 		url: 'mapbox://gsepulveda96.statelines'
 	});
 
+	console.log(map.getStyle().layers);
+
 	var countyExpression = ['match', ['get', 'fips']];
 	var stateExpression = ['match', ['get', 'STATE']];
 
@@ -116,17 +117,6 @@ map.on('load', function () {
 	stateExpression.push('rgba(255,255,255,1)');
 
 	// Add layer from the vector tile source with countyData-driven style
-	map.addLayer({
-		'id': 'covid-county',
-		'type': 'fill',
-		'source': 'counties-with-pops-f-8nbien',
-		'source-layer': 'counties-with-pops-f-8nbien',
-		'paint': {
-			'fill-color': countyExpression,
-			'fill-outline-color': '#000000',
-			'fill-opacity': 0.5
-		}
-	});
 
 	map.addLayer({
 		'id': 'covid-state',
@@ -136,7 +126,18 @@ map.on('load', function () {
 		'paint': {
 			'fill-color': stateExpression
 		}
-	})
+	},'state-label')
+
+	map.addLayer({
+		'id': 'covid-county',
+		'type': 'fill',
+		'source': 'counties-with-pops-f-8nbien',
+		'source-layer': 'counties-with-pops-f-8nbien',
+		'paint': {
+			'fill-color': countyExpression,
+			'fill-outline-color': '#000000',
+		}
+	}, 'covid-state');
 
 	map.addLayer({
 		'id': 'statelines',
@@ -147,7 +148,7 @@ map.on('load', function () {
 			'line-color': '#000000',
 			'line-width': 2
 		}
-	});
+	}), 'state-label';
 
 	map.on('mousemove', 'covid-county', function (e) {
 		map.getCanvas().style.cursor = 'pointer';
