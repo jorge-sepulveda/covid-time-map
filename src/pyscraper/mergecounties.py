@@ -97,8 +97,17 @@ mydate = start
 while (mydate < end):
     print("{date.year:04}-{date.month:02}-{date.day:02}".format(date=mydate))
 
-    daytoGet = "{date.year:04}-{date.month:02}-{date.day:02}".format(date=mydate)
-    bigBoi.update(mergeJson(getAllCasesByDate(daytoGet, rows), daytoGet))
+    daytoGet = "{date.year:04}-{date.month:02}-{date.day:02}".format(date=mydate)  
+    dailyJ = mergeJson(getAllCasesByDate(daytoGet, rows), daytoGet)
+    bigBoi.update(dailyJ)
+    
+
+    fileName = 'outputFiles/counties/' + daytoGet + '.json'
+
+    with open(fileName, 'w') as dailyFile:
+        json.dump(dailyJ, dailyFile, separators=(',', ': '))
+        dailyFile.close()
+
     mydate += day
 
 

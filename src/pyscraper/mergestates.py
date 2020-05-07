@@ -96,12 +96,18 @@ day = timedelta(days=1)
 mydate = start
 while mydate < end:
     print("{date.year:04}-{date.month:02}-{date.day:02}".format(date=mydate))
-
     daytoGet = "{date.year:04}-{date.month:02}-{date.day:02}".format(date=mydate)
-    bigBoi.update(mergeJson(getAllCasesByDate(daytoGet, rows), daytoGet))
+
+    dailyJ = mergeJson(getAllCasesByDate(daytoGet, rows), daytoGet)
+    bigBoi.update(dailyJ)
+
+    fileName = 'outputFiles/states/' + daytoGet + '.json'
+
+    with open(fileName, 'w') as dailyFile:
+        json.dump(dailyJ, dailyFile, separators=(',', ': '))
+        dailyFile.close()
+
     mydate += day
-
-
     #countiesJ = mergeJson(extractCsvByDate(fileName), fileName)
 
     #outFileName = 'outputFiles/'+ fileName +'.json'

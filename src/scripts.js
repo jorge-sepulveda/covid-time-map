@@ -1,17 +1,17 @@
 var countyData;
 var stateData;
 var currentDateSelected;
+var stateURL = 
 $(document).ready(function () {
 	$.getJSON("https://raw.githubusercontent.com/jorge-sepulveda/covid-time-map/master/src/time-series-counties.json", function (json) {
 		countyData = json;
 	}).done(function () {
 		console.log('counties downloaded')
-		countyKeys = (Object.keys(countyData))
-		currentDateSelected = countyKeys[countyKeys.length - 1]
-		console.log(currentDateSelected)
 	});
 	$.getJSON("https://raw.githubusercontent.com/jorge-sepulveda/covid-time-map/master/src/time-series-states.json", function (json) {
 		stateData = json;
+	}).done(function () {
+		console.log('states downloaded')
 	});
 });
 
