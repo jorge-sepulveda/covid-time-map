@@ -22,12 +22,12 @@ var map = new mapboxgl.Map({
 	center: [-99.9, 41.5],
 	zoom: 4,
 	minZoom: 3,
-	maxZoom:6
+	maxZoom:10
 });
 
 function validateDate() {
 	var minDate = new Date('01/21/2020');
-	var maxDate = new Date('05/04/2020');
+	var maxDate = new Date('05/06/2020');
 	var dateToCheck = new Date($("#mapdate").val())
 	if (dateToCheck > minDate && dateToCheck <= maxDate) {
 		reloadMap()
@@ -126,7 +126,7 @@ map.on('load', function () {
 		'paint': {
 			'fill-color': stateExpression
 		}
-	},'state-label')
+	},'road-label')
 
 	map.addLayer({
 		'id': 'covid-county',
@@ -146,7 +146,7 @@ map.on('load', function () {
 		'source-layer': 'state-lines',
 		'paint': {
 			'line-color': '#000000',
-			'line-width': 2
+			'line-width': 1
 		}
 	}), 'state-label';
 

@@ -45,13 +45,15 @@ def mergeJson(csvDataJ, date):
             amount = csvDataJ[fipsCode]['amount']
             deaths = csvDataJ[fipsCode]['deaths']
             IR = (int(csvDataJ[fipsCode]['amount'])/int(counties['features'][i]['properties']['POPESTIMATE2019']))*100000
+            DR = (int(csvDataJ[fipsCode]['deaths'])/int(counties['features'][i]['properties']['POPESTIMATE2019']))*100000
             
             dataToAdd = {
                 'fips' : fipsCode,
                 'population' : pops,
                 'confirmed': amount,
                 'deaths' : deaths,
-                'infection_rate' : IR
+                'infection_rate' : IR,
+                'death_rate' : DR
             }
             completeJ[date].append(dataToAdd)
 
@@ -61,7 +63,8 @@ def mergeJson(csvDataJ, date):
                 'population' : pops,
                 'confirmed': 0,
                 'deaths' : 0,
-                'infection_rate' : 0
+                'infection_rate' : 0,
+                'death_rate' : 0
             }  
             completeJ[date].append(dataToAdd)
             badcounties+=1

@@ -62,6 +62,10 @@ button {
 	padding: 2px 2px;
 }
 
+span{
+	outline: black;
+}
+
 body {
 	margin: 0;
 	padding: 0;
