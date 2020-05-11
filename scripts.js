@@ -1,7 +1,8 @@
 var countyData;
 var stateData;
 var currentDateSelected;
-var currentDateSelected = '2020-05-06'
+var currentDateSelected = '2020-05-09'
+var mortalButtonSelected = false;
 var stateURL = 'https://raw.githubusercontent.com/jorge-sepulveda/covid-time-map/master/src/pyscraper/outputFiles/states/' + currentDateSelected + '.json'
 var countyURL = 'https://raw.githubusercontent.com/jorge-sepulveda/covid-time-map/master/src/pyscraper/outputFiles/counties/' + currentDateSelected + '.json'
 $(document).ready(function () {
@@ -17,7 +18,7 @@ $(document).ready(function () {
 	});
 });
 
-mapboxgl.accessToken = 'pk.eyJ1IjoiZ3NlcHVsdmVkYTk2IiwiYSI6ImNrOXhjb3gzeDAyNzYzdHBtYjhxY2w4ankifQ.QD92mAgyYipH7eL9h89F6w';
+mapboxgl.accessToken = 'pk.eyJ1IjoiZ3NlcHVsdmVkYTk2IiwiYSI6ImNrOHcxNWxveTA5bHkzZm1jZnVia2JpbDEifQ.uItzrq1zGYszzvQCGd3Erg';
 var map = new mapboxgl.Map({
 	container: 'map',
 	style: 'mapbox://styles/gsepulveda96/ck9x8kqvf16h71ip8tuuvk97i',
@@ -29,7 +30,7 @@ var map = new mapboxgl.Map({
 
 function validateDate() {
 	var minDate = new Date('01/21/2020');
-	var maxDate = new Date('05/06/2020');
+	var maxDate = new Date('05/09 /2020');
 	var dateToCheck = new Date($("#mapdate").val())
 	if (dateToCheck > minDate && dateToCheck <= maxDate) {
 		reloadData()
@@ -55,17 +56,16 @@ function reloadData() {
 		})
 	).then(function( cData , sData) {
 		if (cData && sData ) {
-			reloadMap()
+			mortalButtonSelected ? drawDeathMap() : drawCasesMap();
 		}
 		else {
 			alert('something went horribly wrong' )
 		}
-
 	});
 }
 
-function reloadMap() {
 
+function drawCasesMap() {
 	dateValue = moment($("#mapdate").val());
 	dateToLoad = dateValue.format("YYYY-MM-DD").toString()
 	currentDateSelected = dateToLoad
@@ -101,6 +101,44 @@ function reloadMap() {
 	map.setPaintProperty('covid-county', 'fill-color', newCountyExpression)
 }
 
+function drawDeathMap() {
+
+	dateValue = moment($("#mapdate").val());
+	dateToLoad = dateValue.format("YYYY-MM-DD").toString()
+	currentDateSelected = dateToLoad
+
+	var newStateExpression = ['match', ['get', 'STATE']];
+	var newCountyExpression = ['match', ['get', 'fips']];
+
+	stateData[currentDateSelected].forEach(function (row) {
+		number = (row['death_rate'])
+		var color = (number > 1000) ? "#006d2c" :
+			(number > 500) ? "#2ca25f" :
+			(number > 100) ? "#66c2a4" :
+			(number > 10) ? "#99d8c9" :
+			(number > 1) ? "#ccece6" :
+			"#edf8fb";
+		newStateExpression.push(row['STATE'], color);
+	});
+	countyData[currentDateSelected].forEach(function (row) {
+		number = (row['death_rate'])
+		var color = (number > 1000) ? "#006d2c" :
+			(number > 500) ? "#2ca25f" :
+			(number > 100) ? "#66c2a4" :
+			(number > 10) ? "#99d8c9" :
+			(number > 1) ? "#ccece6" :
+			"#edf8fb";
+		newCountyExpression.push(row['fips'], color);
+	});
+
+	newStateExpression.push('rgba(255,255,255,1)');
+	newCountyExpression.push('rgba(255,255,255,1)');
+
+	map.setPaintProperty('covid-state', 'fill-color', newStateExpression)
+	map.setPaintProperty('covid-county', 'fill-color', newCountyExpression)
+
+}
+
 map.on('load', function () {
 	map.addSource('counties-with-pops-f-8nbien', {
 		type: 'vector',
@@ -114,47 +152,13 @@ map.on('load', function () {
 
 	console.log(map.getStyle().layers);
 
-	var countyExpression = ['match', ['get', 'fips']];
-	var stateExpression = ['match', ['get', 'STATE']];
-
-	countyData[currentDateSelected].forEach(function (row) {
-		number = (row['infection_rate'])
-
-		var color = (number > 1000) ? "#AE8080" :
-			(number > 500) ? "#D18080" :
-			(number > 100) ? "#FC8B8B" :
-			(number > 10) ? "#FDC4C4" :
-			(number > 1) ? "#FDE6E6" :
-			"#FFFFFF";
-		countyExpression.push(row['fips'], color);
-	});
-
-	stateData[currentDateSelected].forEach(function (row) {
-		number = (row['infection_rate'])
-
-		var color = (number > 1000) ? "#AE8080" :
-			(number > 500) ? "#D18080" :
-			(number > 100) ? "#FC8B8B" :
-			(number > 10) ? "#FDC4C4" :
-			(number > 1) ? "#FDE6E6" :
-			"#FFFFFF";
-		stateExpression.push(row['STATE'], color);
-	});
-
-	// Last value is the default, used where there is no countyData
-	countyExpression.push('rgba(255,255,255,1)');
-	stateExpression.push('rgba(255,255,255,1)');
-
 	// Add layer from the vector tile source with countyData-driven style
 
 	map.addLayer({
 		'id': 'covid-state',
 		'type': 'fill',
 		'source': 'state-lines',
-		'source-layer': 'state-lines',
-		'paint': {
-			'fill-color': stateExpression
-		}
+		'source-layer': 'state-lines'
 	},'road-minor-low')
 
 	map.addLayer({
@@ -163,7 +167,6 @@ map.on('load', function () {
 		'source': 'counties-with-pops-f-8nbien',
 		'source-layer': 'counties-with-pops-f-8nbien',
 		'paint': {
-			'fill-color': countyExpression,
 			'fill-outline-color': '#000000',
 		}
 	}, 'covid-state');
@@ -179,7 +182,8 @@ map.on('load', function () {
 		}
 	}), 'state-label';
 
-	
+	drawCasesMap()
+
 	map.on('mousemove', 'covid-county', function (e) {
 		map.getCanvas().style.cursor = 'pointer';
 		var coordinates = e.features[0].geometry.coordinates.slice();
@@ -227,10 +231,16 @@ map.on('load', function () {
 		document.getElementById("info-box").innerHTML = "Hover over the map to see info"
 	});
 
+	//Toggle County Button
 	var link = document.createElement('a');
 	link.href = '#';
 	link.className = ''
 	link.textContent = 'Toggle Counties'
+	//Mortality Rate Button
+	var mortalButton = document.createElement('a')
+	mortalButton.href = '#'
+	mortalButton.className = ''
+	mortalButton.textContent = 'Mortality Rate'
 
 	link.onclick = function (e) {
 		e.preventDefault();
@@ -245,14 +255,24 @@ map.on('load', function () {
 		}
 	}
 
-	var mortalButton = document.createElement('a')
-	mortalButton.href = '#'
-	mortalButton.className = ''
-	mortalButton.textContent = 'Mortality Rate'
+	mortalButton.onclick = function (e) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		if (this.className === 'active') {
+			this.className = '';
+			mortalButtonSelected = false;
+			drawCasesMap();
+			
+		} else {
+			mortalButtonSelected = true;
+			this.className = 'active'
+			drawDeathMap();
+		}
+	}
+
 
 	var layers = document.getElementById('menu');
 	layers.appendChild(link);
-	layers.appendChild(mortalButton)
-
-	//map.addControl(new mapboxgl.NavigationControl());
+	layers.appendChild(mortalButton);
 });
