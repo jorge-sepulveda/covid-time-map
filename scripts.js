@@ -30,7 +30,7 @@ var map = new mapboxgl.Map({
 
 function validateDate() {
 	var minDate = new Date('01/21/2020');
-	var maxDate = new Date('05/09 /2020');
+	var maxDate = new Date('05/09/2020');
 	var dateToCheck = new Date($("#mapdate").val())
 	if (dateToCheck > minDate && dateToCheck <= maxDate) {
 		reloadData()
@@ -112,9 +112,9 @@ function drawDeathMap() {
 
 	stateData[currentDateSelected].forEach(function (row) {
 		number = (row['death_rate'])
-		var color = (number > 1000) ? "#006d2c" :
-			(number > 500) ? "#2ca25f" :
-			(number > 100) ? "#66c2a4" :
+		var color = (number > 100) ? "#006d2c" :
+			(number > 75) ? "#2ca25f" :
+			(number > 50) ? "#66c2a4" :
 			(number > 10) ? "#99d8c9" :
 			(number > 1) ? "#ccece6" :
 			"#edf8fb";
@@ -122,9 +122,9 @@ function drawDeathMap() {
 	});
 	countyData[currentDateSelected].forEach(function (row) {
 		number = (row['death_rate'])
-		var color = (number > 1000) ? "#006d2c" :
-			(number > 500) ? "#2ca25f" :
-			(number > 100) ? "#66c2a4" :
+		var color = (number > 100) ? "#006d2c" :
+			(number > 75) ? "#2ca25f" :
+			(number > 50) ? "#66c2a4" :
 			(number > 10) ? "#99d8c9" :
 			(number > 1) ? "#ccece6" :
 			"#edf8fb";
@@ -133,10 +133,8 @@ function drawDeathMap() {
 
 	newStateExpression.push('rgba(255,255,255,1)');
 	newCountyExpression.push('rgba(255,255,255,1)');
-
 	map.setPaintProperty('covid-state', 'fill-color', newStateExpression)
 	map.setPaintProperty('covid-county', 'fill-color', newCountyExpression)
-
 }
 
 map.on('load', function () {
@@ -151,7 +149,6 @@ map.on('load', function () {
 	});
 
 	console.log(map.getStyle().layers);
-
 	// Add layer from the vector tile source with countyData-driven style
 
 	map.addLayer({
@@ -263,11 +260,15 @@ map.on('load', function () {
 			this.className = '';
 			mortalButtonSelected = false;
 			drawCasesMap();
+			document.getElementById('cases-legend').style.display = 'block';
+			document.getElementById('mortality-legend').style.display = 'none';
 			
 		} else {
 			mortalButtonSelected = true;
 			this.className = 'active'
 			drawDeathMap();
+			document.getElementById('cases-legend').style.display = 'none';
+			document.getElementById('mortality-legend').style.display = 'block';
 		}
 	}
 
