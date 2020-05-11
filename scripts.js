@@ -17,7 +17,7 @@ $(document).ready(function () {
 	});
 });
 
-mapboxgl.accessToken = 'pk.eyJ1IjoiZ3NlcHVsdmVkYTk2IiwiYSI6ImNrOHcxNWxveTA5bHkzZm1jZnVia2JpbDEifQ.uItzrq1zGYszzvQCGd3Erg';
+mapboxgl.accessToken = 'pk.eyJ1IjoiZ3NlcHVsdmVkYTk2IiwiYSI6ImNrOXhjb3gzeDAyNzYzdHBtYjhxY2w4ankifQ.QD92mAgyYipH7eL9h89F6w';
 var map = new mapboxgl.Map({
 	container: 'map',
 	style: 'mapbox://styles/gsepulveda96/ck9x8kqvf16h71ip8tuuvk97i',
