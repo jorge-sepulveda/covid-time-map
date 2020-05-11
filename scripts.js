@@ -1,6 +1,5 @@
 var countyData;
 var stateData;
-var currentDateSelected;
 var currentDateSelected = '2020-05-09'
 var mortalButtonSelected = false;
 var stateURL = 'https://raw.githubusercontent.com/jorge-sepulveda/covid-time-map/master/src/pyscraper/outputFiles/states/' + currentDateSelected + '.json'
@@ -16,9 +15,10 @@ $(document).ready(function () {
 	}).done(function () {
 		console.log('states downloaded')
 	});
+	//getLatestData();
 });
 
-mapboxgl.accessToken = 'pk.eyJ1IjoiZ3NlcHVsdmVkYTk2IiwiYSI6ImNrOHcxNWxveTA5bHkzZm1jZnVia2JpbDEifQ.uItzrq1zGYszzvQCGd3Erg';
+mapboxgl.accessToken = 'pk.eyJ1IjoiZ3NlcHVsdmVkYTk2IiwiYSI6ImNrOXhjb3gzeDAyNzYzdHBtYjhxY2w4ankifQ.QD92mAgyYipH7eL9h89F6w';
 var map = new mapboxgl.Map({
 	container: 'map',
 	style: 'mapbox://styles/gsepulveda96/ck9x8kqvf16h71ip8tuuvk97i',
@@ -27,6 +27,20 @@ var map = new mapboxgl.Map({
 	minZoom: 3,
 	maxZoom:10
 });
+
+function getLatestData() {
+	var day = moment()
+	console.log(day);
+	var stateURL = 'https://raw.githubusercontent.com/jorge-sepulveda/covid-time-map/master/src/pyscraper/outputFiles/states/' + day.format('YYYY-MM-DD').toString() + '.json'
+	var countyURL = 'https://raw.githubusercontent.com/jorge-sepulveda/covid-time-map/master/src/pyscraper/outputFiles/counties/' + day.format('YYYY-MM-DD').toString() + '.json'
+	$.getJSON(countyURL, function (json) {
+		countyData = json;
+	}).done(function () {
+		console.log('counties downloaded')
+	}).fail(function () {
+		day.subtract(1,'d')
+	});
+}
 
 function validateDate() {
 	var minDate = new Date('01/21/2020');
@@ -112,22 +126,22 @@ function drawDeathMap() {
 
 	stateData[currentDateSelected].forEach(function (row) {
 		number = (row['death_rate'])
-		var color = (number > 100) ? "#006d2c" :
-			(number > 75) ? "#2ca25f" :
-			(number > 50) ? "#66c2a4" :
-			(number > 10) ? "#99d8c9" :
-			(number > 1) ? "#ccece6" :
-			"#edf8fb";
+		var color = (number > 100) ? "#54278f" :
+			(number > 75) ? "#756bb1" :
+			(number > 50) ? "#9e9ac8" :
+			(number > 10) ? "#bcbddc" :
+			(number > 1) ? "#dadaeb" :
+			"#f2f0f7";
 		newStateExpression.push(row['STATE'], color);
 	});
 	countyData[currentDateSelected].forEach(function (row) {
 		number = (row['death_rate'])
-		var color = (number > 100) ? "#006d2c" :
-			(number > 75) ? "#2ca25f" :
-			(number > 50) ? "#66c2a4" :
-			(number > 10) ? "#99d8c9" :
-			(number > 1) ? "#ccece6" :
-			"#edf8fb";
+		var color = (number > 100) ? "#54278f" :
+			(number > 75) ? "#756bb1" :
+			(number > 50) ? "#9e9ac8" :
+			(number > 10) ? "#bcbddc" :
+			(number > 1) ? "#dadaeb" :
+			"#f2f0f7";
 		newCountyExpression.push(row['fips'], color);
 	});
 
@@ -197,7 +211,7 @@ map.on('load', function () {
 			'Cases: ' + selectedCounty[0]['confirmed'] + '</br>' +
 			'Infection Rate: ' + selectedCounty[0]['infection_rate'].toFixed(2) + '/100,000 People</br>' +
 			'Deaths: ' + selectedCounty[0]['confirmed'] + '</br>'+
-			'Death Rate: '+ selectedCounty[0]['death_rate'].toFixed(2))
+			'Mortality Rate: '+ selectedCounty[0]['death_rate'].toFixed(2) + '/100,000 People')
 	});
 	map.on('mouseleave', 'covid-county', function () {
 		map.getCanvas().style.cursor = '';
@@ -220,7 +234,7 @@ map.on('load', function () {
 			'Cases: ' + selectedState[0]['confirmed'] + '</br>' +
 			'Infection Rate: ' + selectedState[0]['infection_rate'].toFixed(2) + '/100,000 People</br>' +
 			'Deaths: ' + selectedState[0]['confirmed'] + '</br>' +
-			'Death Rate: '+ selectedState[0]['death_rate'].toFixed(2))
+			'Death Rate: '+ selectedState[0]['death_rate'].toFixed(2) + '/100,000 People')
 	});
 	
 	map.on('mouseleave', 'covid-county', function () {
