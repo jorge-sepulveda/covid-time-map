@@ -1,6 +1,7 @@
 var countyData;
 var stateData;
-var currentDateSelected = '2020-05-09'
+var maxDate;
+var currentDateSelected = '2020-05-10'
 var mortalButtonSelected = false;
 var stateURL = 'https://raw.githubusercontent.com/jorge-sepulveda/covid-time-map/master/src/pyscraper/outputFiles/states/' + currentDateSelected + '.json'
 var countyURL = 'https://raw.githubusercontent.com/jorge-sepulveda/covid-time-map/master/src/pyscraper/outputFiles/counties/' + currentDateSelected + '.json'
@@ -16,9 +17,10 @@ $(document).ready(function () {
 		console.log('states downloaded')
 	});
 	//getLatestData();
+	setDatePicker();
 });
 
-mapboxgl.accessToken = 'pk.eyJ1IjoiZ3NlcHVsdmVkYTk2IiwiYSI6ImNrOXhjb3gzeDAyNzYzdHBtYjhxY2w4ankifQ.QD92mAgyYipH7eL9h89F6w';
+mapboxgl.accessToken = 'pk.eyJ1IjoiZ3NlcHVsdmVkYTk2IiwiYSI6ImNrOHcxNWxveTA5bHkzZm1jZnVia2JpbDEifQ.uItzrq1zGYszzvQCGd3Erg';
 var map = new mapboxgl.Map({
 	container: 'map',
 	style: 'mapbox://styles/gsepulveda96/ck9x8kqvf16h71ip8tuuvk97i',
@@ -27,6 +29,12 @@ var map = new mapboxgl.Map({
 	minZoom: 3,
 	maxZoom:10
 });
+
+function setDatePicker(){
+	document.getElementById('mapdate').value = currentDateSelected;
+	document.getElementById('mapdate').max = currentDateSelected;
+	maxDate = currentDateSelected;
+}
 
 function getLatestData() {
 	var day = moment()
@@ -43,10 +51,11 @@ function getLatestData() {
 }
 
 function validateDate() {
-	var minDate = new Date('01/21/2020');
-	var maxDate = new Date('05/09/2020');
-	var dateToCheck = new Date($("#mapdate").val())
-	if (dateToCheck > minDate && dateToCheck <= maxDate) {
+	var lowDate = moment('2020-01-21', 'YYYY-MM-DD')
+	var highDate = moment(maxDate, 'YYYY-MM-DD')
+
+	var dateToCheck = moment($("#mapdate").val(), 'YYYY-MM-DD')
+	if (dateToCheck > lowDate && dateToCheck <= highDate) {
 		reloadData()
 	} else {
 		alert('Date not available\n' + dateToCheck + '')
@@ -193,7 +202,7 @@ map.on('load', function () {
 		}
 	}), 'state-label';
 
-	drawCasesMap()
+	reloadData()
 
 	map.on('mousemove', 'covid-county', function (e) {
 		map.getCanvas().style.cursor = 'pointer';

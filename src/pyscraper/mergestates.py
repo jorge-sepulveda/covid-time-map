@@ -92,6 +92,7 @@ bigBoi = {}
 start = date(2020, 1, 21)
 end = date.today()
 day = timedelta(days=1)
+print("Scraping State Data")
 
 mydate = start
 while mydate < end:
