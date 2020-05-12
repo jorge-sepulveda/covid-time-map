@@ -1,7 +1,7 @@
 var countyData;
 var stateData;
 var maxDate;
-var currentDateSelected = '2020-05-10'
+var currentDateSelected = '2020-05-11'
 var mortalButtonSelected = false;
 var stateURL = 'https://raw.githubusercontent.com/jorge-sepulveda/covid-time-map/master/src/pyscraper/outputFiles/states/' + currentDateSelected + '.json'
 var countyURL = 'https://raw.githubusercontent.com/jorge-sepulveda/covid-time-map/master/src/pyscraper/outputFiles/counties/' + currentDateSelected + '.json'
@@ -51,14 +51,13 @@ function getLatestData() {
 }
 
 function validateDate() {
-	var lowDate = moment('2020-01-21', 'YYYY-MM-DD')
+	var lowDate = moment('2020-01-20', 'YYYY-MM-DD')
 	var highDate = moment(maxDate, 'YYYY-MM-DD')
-
 	var dateToCheck = moment($("#mapdate").val(), 'YYYY-MM-DD')
 	if (dateToCheck > lowDate && dateToCheck <= highDate) {
 		reloadData()
 	} else {
-		alert('Date not available\n' + dateToCheck + '')
+		alert('Date not available\n' + dateToCheck.format('MMM Do YYYY').toString())
 	}
 }
 
@@ -187,7 +186,7 @@ map.on('load', function () {
 		'source': 'counties-with-pops-f-8nbien',
 		'source-layer': 'counties-with-pops-f-8nbien',
 		'paint': {
-			'fill-outline-color': '#000000',
+			'fill-outline-color': '#ffffff',
 		}
 	}, 'covid-state');
 
