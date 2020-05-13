@@ -1,11 +1,10 @@
-var countyData;
-var stateData;
-var maxDate;
-var currentDateSelected = '2020-05-11'
-var mortalButtonSelected = false;
-var stateURL = 'https://raw.githubusercontent.com/jorge-sepulveda/covid-time-map/master/src/pyscraper/outputFiles/states/' + currentDateSelected + '.json'
-var countyURL = 'https://raw.githubusercontent.com/jorge-sepulveda/covid-time-map/master/src/pyscraper/outputFiles/counties/' + currentDateSelected + '.json'
 $(document).ready(function () {
+	var countyData;
+	var stateData;
+	var currentDateSelected = '2020-05-12';
+	var stateURL = 'https://raw.githubusercontent.com/jorge-sepulveda/covid-time-map/master/src/pyscraper/outputFiles/states/' + currentDateSelected + '.json'
+	var countyURL = 'https://raw.githubusercontent.com/jorge-sepulveda/covid-time-map/master/src/pyscraper/outputFiles/counties/' + currentDateSelected + '.json'
+
 	$.getJSON(countyURL, function (json) {
 		countyData = json;
 	}).done(function () {
@@ -16,8 +15,7 @@ $(document).ready(function () {
 	}).done(function () {
 		console.log('states downloaded')
 	});
-	//getLatestData();
-	setDatePicker();
+	setDatePicker(currentDateSelected);
 });
 
 mapboxgl.accessToken = 'pk.eyJ1IjoiZ3NlcHVsdmVkYTk2IiwiYSI6ImNrOHcxNWxveTA5bHkzZm1jZnVia2JpbDEifQ.uItzrq1zGYszzvQCGd3Erg';
@@ -27,27 +25,13 @@ var map = new mapboxgl.Map({
 	center: [-94.64, 37.68],
 	zoom: 4,
 	minZoom: 3,
-	maxZoom:10
+	maxZoom: 10
 });
 
-function setDatePicker(){
-	document.getElementById('mapdate').value = currentDateSelected;
-	document.getElementById('mapdate').max = currentDateSelected;
-	maxDate = currentDateSelected;
-}
-
-function getLatestData() {
-	var day = moment()
-	console.log(day);
-	var stateURL = 'https://raw.githubusercontent.com/jorge-sepulveda/covid-time-map/master/src/pyscraper/outputFiles/states/' + day.format('YYYY-MM-DD').toString() + '.json'
-	var countyURL = 'https://raw.githubusercontent.com/jorge-sepulveda/covid-time-map/master/src/pyscraper/outputFiles/counties/' + day.format('YYYY-MM-DD').toString() + '.json'
-	$.getJSON(countyURL, function (json) {
-		countyData = json;
-	}).done(function () {
-		console.log('counties downloaded')
-	}).fail(function () {
-		day.subtract(1,'d')
-	});
+function setDatePicker(dateSelected) {
+	document.getElementById('mapdate').value = dateSelected;
+	document.getElementById('mapdate').max = dateSelected;
+	maxDate = dateSelected;
 }
 
 function validateDate() {
@@ -57,11 +41,11 @@ function validateDate() {
 	if (dateToCheck > lowDate && dateToCheck <= highDate) {
 		reloadData()
 	} else {
-		alert('Date not available\n' + dateToCheck.format('MMM Do YYYY').toString())
+		alert('Date not available: ' + dateToCheck.format('MMM Do YYYY').toString())
 	}
 }
 
-function reloadData() {
+function reloadData(mortalButtonSelected) {
 	dateValue = moment($("#mapdate").val());
 	dateToLoad = dateValue.format("YYYY-MM-DD").toString()
 	currentDateSelected = dateToLoad
@@ -70,22 +54,20 @@ function reloadData() {
 	stateURL = 'https://raw.githubusercontent.com/jorge-sepulveda/covid-time-map/master/src/pyscraper/outputFiles/states/' + currentDateSelected + '.json'
 	countyURL = 'https://raw.githubusercontent.com/jorge-sepulveda/covid-time-map/master/src/pyscraper/outputFiles/counties/' + currentDateSelected + '.json'
 	$.when(
-		$.getJSON(countyURL, function(data) {
+		$.getJSON(countyURL, function (data) {
 			countyData = data;
 		}),
-		$.getJSON(stateURL, function(data) {
+		$.getJSON(stateURL, function (data) {
 			stateData = data;
 		})
-	).then(function( cData , sData) {
-		if (cData && sData ) {
+	).then(function (cData, sData) {
+		if (cData && sData) {
 			mortalButtonSelected ? drawDeathMap() : drawCasesMap();
-		}
-		else {
-			alert('something went horribly wrong' )
+		} else {
+			alert('something went horribly wrong')
 		}
 	});
 }
-
 
 function drawCasesMap() {
 	dateValue = moment($("#mapdate").val());
@@ -178,7 +160,7 @@ map.on('load', function () {
 		'type': 'fill',
 		'source': 'state-lines',
 		'source-layer': 'state-lines'
-	},'road-minor-low')
+	}, 'road-minor-low')
 
 	map.addLayer({
 		'id': 'covid-county',
@@ -201,7 +183,7 @@ map.on('load', function () {
 		}
 	}), 'state-label';
 
-	reloadData()
+	reloadData(false)
 
 	map.on('mousemove', 'covid-county', function (e) {
 		map.getCanvas().style.cursor = 'pointer';
@@ -218,14 +200,14 @@ map.on('load', function () {
 			'Population: ' + feature.properties.POPESTIMATE2019 + '</br>' +
 			'Cases: ' + selectedCounty[0]['confirmed'] + '</br>' +
 			'Infection Rate: ' + selectedCounty[0]['infection_rate'].toFixed(2) + '/100,000 People</br>' +
-			'Deaths: ' + selectedCounty[0]['confirmed'] + '</br>'+
-			'Mortality Rate: '+ selectedCounty[0]['death_rate'].toFixed(2) + '/100,000 People')
+			'Deaths: ' + selectedCounty[0]['confirmed'] + '</br>' +
+			'Mortality Rate: ' + selectedCounty[0]['death_rate'].toFixed(2) + '/100,000 People')
 	});
 	map.on('mouseleave', 'covid-county', function () {
 		map.getCanvas().style.cursor = '';
 		document.getElementById("info-box").innerHTML = "Hover over the map to see info"
 	});
-	
+
 	map.on('mousemove', 'covid-state', function (e) {
 		map.getCanvas().style.cursor = 'pointer';
 		var coordinates = e.features[0].geometry.coordinates.slice();
@@ -242,9 +224,9 @@ map.on('load', function () {
 			'Cases: ' + selectedState[0]['confirmed'] + '</br>' +
 			'Infection Rate: ' + selectedState[0]['infection_rate'].toFixed(2) + '/100,000 People</br>' +
 			'Deaths: ' + selectedState[0]['confirmed'] + '</br>' +
-			'Death Rate: '+ selectedState[0]['death_rate'].toFixed(2) + '/100,000 People')
+			'Death Rate: ' + selectedState[0]['death_rate'].toFixed(2) + '/100,000 People')
 	});
-	
+
 	map.on('mouseleave', 'covid-county', function () {
 		map.getCanvas().style.cursor = '';
 		document.getElementById("info-box").innerHTML = "Hover over the map to see info"
@@ -284,7 +266,7 @@ map.on('load', function () {
 			drawCasesMap();
 			document.getElementById('cases-legend').style.display = 'block';
 			document.getElementById('mortality-legend').style.display = 'none';
-			
+
 		} else {
 			mortalButtonSelected = true;
 			this.className = 'active'
