@@ -1,24 +1,9 @@
 $(document).ready(function () {
-	var countyData;
-	var stateData;
-	var currentDateSelected = '2020-05-12';
-	var stateURL = 'https://raw.githubusercontent.com/jorge-sepulveda/covid-time-map/master/src/pyscraper/outputFiles/states/' + currentDateSelected + '.json'
-	var countyURL = 'https://raw.githubusercontent.com/jorge-sepulveda/covid-time-map/master/src/pyscraper/outputFiles/counties/' + currentDateSelected + '.json'
-
-	$.getJSON(countyURL, function (json) {
-		countyData = json;
-	}).done(function () {
-		console.log('counties downloaded')
-	});
-	$.getJSON(stateURL, function (json) {
-		stateData = json;
-	}).done(function () {
-		console.log('states downloaded')
-	});
-	setDatePicker(currentDateSelected);
+	setDatePicker(moment())
 });
 
-mapboxgl.accessToken = 'pk.eyJ1IjoiZ3NlcHVsdmVkYTk2IiwiYSI6ImNrOHcxNWxveTA5bHkzZm1jZnVia2JpbDEifQ.uItzrq1zGYszzvQCGd3Erg';
+
+mapboxgl.accessToken = 'pk.eyJ1IjoiZ3NlcHVsdmVkYTk2IiwiYSI6ImNrYTQ2cm9wMjBtM2IzZG12eWFmNm1zMW0ifQ.w4BLAhSp5wKs4LrRQmBbTg';
 var map = new mapboxgl.Map({
 	container: 'map',
 	style: 'mapbox://styles/gsepulveda96/ck9x8kqvf16h71ip8tuuvk97i',
@@ -28,10 +13,20 @@ var map = new mapboxgl.Map({
 	maxZoom: 10
 });
 
+
 function setDatePicker(dateSelected) {
-	document.getElementById('mapdate').value = dateSelected;
-	document.getElementById('mapdate').max = dateSelected;
-	maxDate = dateSelected;
+	var formattedDate = dateSelected.format('YYYY-MM-DD').toString();
+	console.log( ' Trying ' + formattedDate);
+	countyURL = 'https://raw.githubusercontent.com/jorge-sepulveda/covid-time-map/master/src/pyscraper/outputFiles/counties/' + formattedDate + '.json'
+
+	$.getJSON(countyURL, function() {
+		document.getElementById('mapdate').value = formattedDate;
+		document.getElementById('mapdate').max = formattedDate;
+		maxDate = formattedDate;
+	}).fail(function() {
+		setTimeout(setDatePicker, 1000, dateSelected.subtract(1,'d'))
+	})
+	
 }
 
 function validateDate() {
