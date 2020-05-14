@@ -34,7 +34,7 @@ function validateDate() {
 	var highDate = moment(maxDate, 'YYYY-MM-DD')
 	var dateToCheck = moment($("#mapdate").val(), 'YYYY-MM-DD')
 	if (dateToCheck > lowDate && dateToCheck <= highDate) {
-		reloadData()
+		reloadData(mortalButtonSelected)
 	} else {
 		alert('Date not available: ' + dateToCheck.format('MMM Do YYYY').toString())
 	}
@@ -183,7 +183,6 @@ map.on('load', function () {
 	map.on('mousemove', 'covid-county', function (e) {
 		map.getCanvas().style.cursor = 'pointer';
 		var coordinates = e.features[0].geometry.coordinates.slice();
-		var description = e.features[0].properties.description;
 		// Single out the first found feature.
 		while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
 			coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
@@ -207,7 +206,6 @@ map.on('load', function () {
 		map.getCanvas().style.cursor = 'pointer';
 		var coordinates = e.features[0].geometry.coordinates.slice();
 		var description = e.features[0].properties.description;
-		// Single out the first found feature.
 		while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
 			coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
 		}
@@ -226,6 +224,8 @@ map.on('load', function () {
 		map.getCanvas().style.cursor = '';
 		document.getElementById("info-box").innerHTML = "Hover over the map to see info"
 	});
+
+	map.dragRotate.disable();
 
 	//Toggle County Button
 	var link = document.createElement('a');
@@ -270,7 +270,6 @@ map.on('load', function () {
 			document.getElementById('mortality-legend').style.display = 'block';
 		}
 	}
-
 
 	var layers = document.getElementById('menu');
 	layers.appendChild(link);
