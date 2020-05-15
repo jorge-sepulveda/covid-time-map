@@ -16,13 +16,14 @@ var map = new mapboxgl.Map({
 
 function setDatePicker(dateSelected) {
 	var formattedDate = dateSelected.format('YYYY-MM-DD').toString();
-	console.log( ' Trying ' + formattedDate);
+	console.log( 'Trying ' + formattedDate);
 	countyURL = 'https://raw.githubusercontent.com/jorge-sepulveda/covid-time-map/master/src/pyscraper/outputFiles/counties/' + formattedDate + '.json'
 
 	$.getJSON(countyURL, function() {
 		document.getElementById('mapdate').value = formattedDate;
 		document.getElementById('mapdate').max = formattedDate;
 		maxDate = formattedDate;
+		reloadData()
 	}).fail(function() {
 		setTimeout(setDatePicker, 1000, dateSelected.subtract(1,'d'))
 	})
@@ -41,8 +42,7 @@ function validateDate() {
 }
 
 function reloadData(mortalButtonSelected) {
-	dateValue = moment($("#mapdate").val());
-	dateToLoad = dateValue.format("YYYY-MM-DD").toString()
+	dateToLoad = moment($("#mapdate").val()).format('YYYY-MM-DD').toString();
 	currentDateSelected = dateToLoad
 	console.log(currentDateSelected)
 
@@ -132,14 +132,15 @@ function drawDeathMap() {
 
 	newStateExpression.push('rgba(255,255,255,1)');
 	newCountyExpression.push('rgba(255,255,255,1)');
+	
 	map.setPaintProperty('covid-state', 'fill-color', newStateExpression)
 	map.setPaintProperty('covid-county', 'fill-color', newCountyExpression)
 }
 
 map.on('load', function () {
-	map.addSource('counties-with-pops-f-8nbien', {
+	map.addSource('county-lines', {
 		type: 'vector',
-		url: 'mapbox://gsepulveda96.aj2hpi11'
+		url: 'mapbox://gsepulveda96.countylines'
 	});
 
 	map.addSource('state-lines', {
@@ -160,8 +161,8 @@ map.on('load', function () {
 	map.addLayer({
 		'id': 'covid-county',
 		'type': 'fill',
-		'source': 'counties-with-pops-f-8nbien',
-		'source-layer': 'counties-with-pops-f-8nbien',
+		'source': 'county-lines',
+		'source-layer': 'county-lines',
 		'paint': {
 			'fill-outline-color': '#ffffff',
 		}
@@ -178,7 +179,8 @@ map.on('load', function () {
 		}
 	}), 'state-label';
 
-	reloadData(false)
+	mortalButtonSelected = false;
+	reloadData(mortalButtonSelected)
 
 	map.on('mousemove', 'covid-county', function (e) {
 		map.getCanvas().style.cursor = 'pointer';
@@ -194,7 +196,7 @@ map.on('load', function () {
 			'Population: ' + feature.properties.POPESTIMATE2019 + '</br>' +
 			'Cases: ' + selectedCounty[0]['confirmed'] + '</br>' +
 			'Infection Rate: ' + selectedCounty[0]['infection_rate'].toFixed(2) + '/100,000 People</br>' +
-			'Deaths: ' + selectedCounty[0]['confirmed'] + '</br>' +
+			'Deaths: ' + selectedCounty[0]['deaths'] + '</br>' +
 			'Mortality Rate: ' + selectedCounty[0]['death_rate'].toFixed(2) + '/100,000 People')
 	});
 	map.on('mouseleave', 'covid-county', function () {
@@ -216,7 +218,7 @@ map.on('load', function () {
 			'Population: ' + feature.properties.POPESTIMATE2019 + '</br>' +
 			'Cases: ' + selectedState[0]['confirmed'] + '</br>' +
 			'Infection Rate: ' + selectedState[0]['infection_rate'].toFixed(2) + '/100,000 People</br>' +
-			'Deaths: ' + selectedState[0]['confirmed'] + '</br>' +
+			'Deaths: ' + selectedState[0]['deaths'] + '</br>' +
 			'Death Rate: ' + selectedState[0]['death_rate'].toFixed(2) + '/100,000 People')
 	});
 
