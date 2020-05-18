@@ -38,11 +38,14 @@ function validateDate() {
 		reloadData(mortalButtonSelected)
 	} else {
 		alert('Date not available: ' + dateToCheck.format('MMM Do YYYY').toString())
+		document.getElementById('mapdate').value = currentDateSelected;
+		return;
 	}
 }
 
 function reloadData(mortalButtonSelected) {
 	dateToLoad = moment($("#mapdate").val()).format('YYYY-MM-DD').toString();
+	console.log('loading ' + dateToLoad);
 	currentDateSelected = dateToLoad
 	console.log(currentDateSelected)
 
@@ -67,6 +70,7 @@ function reloadData(mortalButtonSelected) {
 function drawCasesMap() {
 	dateValue = moment($("#mapdate").val());
 	dateToLoad = dateValue.format("YYYY-MM-DD").toString()
+	console.log('Cases: loading ' + dateToLoad);
 	currentDateSelected = dateToLoad
 
 	var newStateExpression = ['match', ['get', 'STATE']];
@@ -104,6 +108,7 @@ function drawDeathMap() {
 
 	dateValue = moment($("#mapdate").val());
 	dateToLoad = dateValue.format("YYYY-MM-DD").toString()
+	console.log('Death: loading ' + dateToLoad);
 	currentDateSelected = dateToLoad
 
 	var newStateExpression = ['match', ['get', 'STATE']];
@@ -260,14 +265,14 @@ map.on('load', function () {
 		if (this.className === 'active') {
 			this.className = '';
 			mortalButtonSelected = false;
-			drawCasesMap();
+			validateDate();
 			document.getElementById('cases-legend').style.display = 'block';
 			document.getElementById('mortality-legend').style.display = 'none';
 
 		} else {
 			mortalButtonSelected = true;
 			this.className = 'active'
-			drawDeathMap();
+			validateDate();
 			document.getElementById('cases-legend').style.display = 'none';
 			document.getElementById('mortality-legend').style.display = 'block';
 		}
