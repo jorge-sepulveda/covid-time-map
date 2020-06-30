@@ -92,11 +92,9 @@ bigBoi = {}
 start = date(2020, 1, 21)
 end = date.today()
 day = timedelta(days=1)
-print("Scraping State Data")
 
 mydate = start
 while mydate < end:
-    print("{date.year:04}-{date.month:02}-{date.day:02}".format(date=mydate))
     daytoGet = "{date.year:04}-{date.month:02}-{date.day:02}".format(date=mydate)
 
     dailyJ = mergeJson(getAllCasesByDate(daytoGet, rows), daytoGet)
@@ -116,4 +114,5 @@ while mydate < end:
 with open('../time-series-states.json' ,'w') as f:
     json.dump(bigBoi, f, separators=(',', ': '))
 
+print("Successfully scraped state data for {date.year:04}-{date.month:02}-{date.day:02}".format(date=mydate-day))
 sys.exit()

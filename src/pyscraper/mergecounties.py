@@ -92,12 +92,9 @@ bigBoi = {}
 start = date(2020, 1, 21)
 end = date.today()
 day = timedelta(days=1)
-print("Scraping County Data")
 
 mydate = start
 while (mydate < end):
-    print("{date.year:04}-{date.month:02}-{date.day:02}".format(date=mydate))
-
     daytoGet = "{date.year:04}-{date.month:02}-{date.day:02}".format(date=mydate)  
     dailyJ = mergeJson(getAllCasesByDate(daytoGet, rows), daytoGet)
     bigBoi.update(dailyJ)
@@ -115,7 +112,7 @@ while (mydate < end):
     #countiesJ = mergeJson(extractCsvByDate(fileName), fileName)
 
     #outFileName = 'outputFiles/'+ fileName +'.json'
-    
+print("Successfully scraped county data for {date.year:04}-{date.month:02}-{date.day:02}".format(date=mydate-day))
 with open('../time-series-counties.json' ,'w') as f:
     json.dump(bigBoi, f, separators=(',', ': '))
 
