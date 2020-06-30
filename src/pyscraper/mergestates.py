@@ -115,4 +115,3 @@ with open('../time-series-states.json' ,'w') as f:
     json.dump(bigBoi, f, separators=(',', ': '))
 
 print("Successfully scraped state data for {date.year:04}-{date.month:02}-{date.day:02}".format(date=mydate-day))
-sys.exit()

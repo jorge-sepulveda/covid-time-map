@@ -107,8 +107,6 @@ while (mydate < end):
         dailyFile.close()
 
     mydate += day
-
-
     #countiesJ = mergeJson(extractCsvByDate(fileName), fileName)
 
     #outFileName = 'outputFiles/'+ fileName +'.json'
@@ -116,4 +114,3 @@ print("Successfully scraped county data for {date.year:04}-{date.month:02}-{date
 with open('../time-series-counties.json' ,'w') as f:
     json.dump(bigBoi, f, separators=(',', ': '))
 
-sys.exit()
