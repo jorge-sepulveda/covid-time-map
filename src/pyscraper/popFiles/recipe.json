@@ -1,0 +1,10 @@
+{
+    "version": 1,
+    "layers": {
+      "county-lines": {
+        "source": "mapbox://tileset-source/gsepulveda96/county-lines",
+        "minzoom": 3,
+        "maxzoom": 15
+      }
+    }
+}
